@@ -304,6 +304,8 @@ metadata:
   name: gateway-conformance-app-backend
   labels:
     gateway-conformance: backend
+  annotations:
+    linkerd.io/inject: enabled
 ---
 apiVersion: v1
 kind: Service
@@ -465,6 +467,8 @@ metadata:
   name: gateway-conformance-web-backend
   labels:
     gateway-conformance: backend
+  annotations:
+    linkerd.io/inject: enabled
 ---
 apiVersion: v1
 kind: Service

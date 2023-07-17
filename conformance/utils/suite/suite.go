@@ -150,7 +150,7 @@ func (suite *ConformanceTestSuite) Setup(t *testing.T) {
 
 		suite.Applier.GatewayClass = suite.GatewayClassName
 		suite.Applier.ControllerName = suite.ControllerName
-		
+
 		t.Logf("Test Setup: Applying base manifests")
 		suite.Applier.MustApplyWithCleanup(t, suite.Client, suite.TimeoutConfig, suite.BaseManifests, suite.Cleanup)
 
@@ -228,7 +228,7 @@ func (test *ConformanceTest) Run(t *testing.T, suite *ConformanceTestSuite) {
 
 	for _, manifestLocation := range test.Manifests {
 		t.Logf("Applying %s", manifestLocation)
-		suite.Applier.MustApplyWithCleanup(t, suite.Client, suite.TimeoutConfig, manifestLocation, true)
+		suite.Applier.MustApplyWithCleanup(t, suite.Client, suite.TimeoutConfig, manifestLocation, false)
 	}
 
 	test.Test(t, suite)

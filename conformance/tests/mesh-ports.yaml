@@ -6,6 +6,7 @@ metadata:
 spec:
   parentRefs:
   - kind: Service
+    group: core
     name: echo-v1
     port: 80
   rules:
@@ -27,7 +28,9 @@ metadata:
 spec:
   parentRefs:
   - kind: Service
+    group: core
     name: echo-v2
+    port: 80
   rules:
   - filters:
     - type: ResponseHeaderModifier

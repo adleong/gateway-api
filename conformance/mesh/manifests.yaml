@@ -3,6 +3,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: gateway-conformance-mesh
+  annotations:
+    linkerd.io/inject: enabled
   labels:
     gateway-conformance: mesh
 ---
@@ -147,6 +149,8 @@ metadata:
   name: gateway-conformance-mesh-consumer
   labels:
     gateway-conformance: mesh-consumer
+  annotations:
+    linkerd.io/inject: enabled
 ---
 apiVersion: apps/v1
 kind: Deployment

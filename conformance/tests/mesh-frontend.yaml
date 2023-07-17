@@ -7,6 +7,8 @@ spec:
   parentRefs:
   - kind: Service
     name: echo-v2
+    group: core
+    port: 80
   rules:
   - filters:
     - type: ResponseHeaderModifier
