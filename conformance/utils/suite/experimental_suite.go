@@ -149,7 +149,8 @@ func NewExperimentalConformanceTestSuite(s ExperimentalConformanceOptions) (*Exp
 		Cleanup:          s.CleanupBaseResources,
 		BaseManifests:    s.BaseManifests,
 		Applier: kubernetes.Applier{
-			NamespaceLabels: s.NamespaceLabels,
+			NamespaceLabels:      s.NamespaceLabels,
+			NamespaceAnnotations: s.NamespaceAnnotations,
 		},
 		SupportedFeatures: s.SupportedFeatures,
 		TimeoutConfig:     s.TimeoutConfig,

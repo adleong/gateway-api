@@ -8,7 +8,6 @@ spec:
   - kind: Service
     group: core
     name: echo-v1
-    port: 80
   rules:
   - filters:
     - type: ResponseHeaderModifier

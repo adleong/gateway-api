@@ -55,16 +55,17 @@ type ConformanceTestSuite struct {
 
 // Options can be used to initialize a ConformanceTestSuite.
 type Options struct {
-	Client           client.Client
-	Clientset        *clientset.Clientset
-	RESTClient       *rest.RESTClient
-	RestConfig       *rest.Config
-	GatewayClassName string
-	Debug            bool
-	RoundTripper     roundtripper.RoundTripper
-	BaseManifests    string
-	MeshManifests    string
-	NamespaceLabels  map[string]string
+	Client               client.Client
+	Clientset            *clientset.Clientset
+	RESTClient           *rest.RESTClient
+	RestConfig           *rest.Config
+	GatewayClassName     string
+	Debug                bool
+	RoundTripper         roundtripper.RoundTripper
+	BaseManifests        string
+	MeshManifests        string
+	NamespaceLabels      map[string]string
+	NamespaceAnnotations map[string]string
 
 	// CleanupBaseResources indicates whether or not the base test
 	// resources such as Gateways should be cleaned up after the run.
@@ -120,7 +121,8 @@ func New(s Options) *ConformanceTestSuite {
 		BaseManifests:    s.BaseManifests,
 		MeshManifests:    s.MeshManifests,
 		Applier: kubernetes.Applier{
-			NamespaceLabels: s.NamespaceLabels,
+			NamespaceLabels:      s.NamespaceLabels,
+			NamespaceAnnotations: s.NamespaceAnnotations,
 		},
 		SupportedFeatures: s.SupportedFeatures,
 		TimeoutConfig:     s.TimeoutConfig,

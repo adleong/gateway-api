@@ -6,10 +6,8 @@ metadata:
 spec:
   parentRefs:
   - kind: Service
-    group: core
     name: echo-v1
     namespace: gateway-conformance-mesh
-    port: 80
   rules:
   - filters:
     - type: ResponseHeaderModifier
