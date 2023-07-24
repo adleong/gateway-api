@@ -193,32 +193,60 @@ func NamespacesMustBeReady(t *testing.T, c client.Client, timeoutConfig config.T
 
 	waitErr := wait.PollUntilContextTimeout(context.Background(), 1*time.Second, timeoutConfig.NamespacesMustBeReady, true, func(ctx context.Context) (bool, error) {
 		for _, ns := range namespaces {
-			// gwList := &v1beta1.GatewayList{}
-			// err := c.List(ctx, gwList, client.InNamespace(ns))
-			// if err != nil {
-			// 	t.Errorf("Error listing Gateways: %v", err)
-			// }
-			// for _, gw := range gwList.Items {
-			// 	gw := gw
+			gwList := &v1beta1.GatewayList{}
+			err := c.List(ctx, gwList, client.InNamespace(ns))
+			if err != nil {
+				t.Errorf("Error listing Gateways: %v", err)
+			}
+			for _, gw := range gwList.Items {
+				gw := gw
 
-			// 	if err = ConditionsHaveLatestObservedGeneration(&gw, gw.Status.Conditions); err != nil {
-			// 		t.Logf("Gateway %s/%s %v", ns, gw.Name, err)
-			// 		return false, nil
-			// 	}
+				if err = ConditionsHaveLatestObservedGeneration(&gw, gw.Status.Conditions); err != nil {
+					t.Logf("Gateway %s/%s %v", ns, gw.Name, err)
+					return false, nil
+				}
 
-			// 	// Passing an empty string as the Reason means that any Reason will do.
-			// 	if !findConditionInList(t, gw.Status.Conditions, string(v1beta1.GatewayConditionAccepted), "True", "") {
-			// 		t.Logf("%s/%s Gateway not Accepted yet", ns, gw.Name)
-			// 		return false, nil
-			// 	}
+				// Passing an empty string as the Reason means that any Reason will do.
+				if !findConditionInList(t, gw.Status.Conditions, string(v1beta1.GatewayConditionAccepted), "True", "") {
+					t.Logf("%s/%s Gateway not Accepted yet", ns, gw.Name)
+					return false, nil
+				}
 
-			// 	// Passing an empty string as the Reason means that any Reason will do.
-			// 	if !findConditionInList(t, gw.Status.Conditions, string(v1beta1.GatewayConditionProgrammed), "True", "") {
-			// 		t.Logf("%s/%s Gateway not Programmed yet", ns, gw.Name)
-			// 		return false, nil
-			// 	}
-			// }
+				// Passing an empty string as the Reason means that any Reason will do.
+				if !findConditionInList(t, gw.Status.Conditions, string(v1beta1.GatewayConditionProgrammed), "True", "") {
+					t.Logf("%s/%s Gateway not Programmed yet", ns, gw.Name)
+					return false, nil
+				}
+			}
 
+			podList := &v1.PodList{}
+			err = c.List(ctx, podList, client.InNamespace(ns))
+			if err != nil {
+				t.Errorf("Error listing Pods: %v", err)
+			}
+			for _, pod := range podList.Items {
+				if !findPodConditionInList(t, pod.Status.Conditions, "Ready", "True") &&
+					pod.Status.Phase != v1.PodSucceeded &&
+					pod.DeletionTimestamp == nil {
+					t.Logf("%s/%s Pod not ready yet", ns, pod.Name)
+					return false, nil
+				}
+			}
+		}
+		t.Logf("Gateways and Pods in %s namespaces ready", strings.Join(namespaces, ", "))
+		return true, nil
+	})
+	require.NoErrorf(t, waitErr, "error waiting for %s namespaces to be ready", strings.Join(namespaces, ", "))
+}
+
+// MeshNamespacesMustBeReady waits until all Pods are marked Ready. This is
+// intended to be used for mesh tests and does not require any Gateways to
+// exist. This will cause the test to halt if the specified timeout is exceeded.
+func MeshNamespacesMustBeReady(t *testing.T, c client.Client, timeoutConfig config.TimeoutConfig, namespaces []string) {
+	t.Helper()
+
+	waitErr := wait.PollUntilContextTimeout(context.Background(), 1*time.Second, timeoutConfig.NamespacesMustBeReady, true, func(ctx context.Context) (bool, error) {
+		for _, ns := range namespaces {
 			podList := &v1.PodList{}
 			err := c.List(ctx, podList, client.InNamespace(ns))
 			if err != nil {
@@ -233,7 +261,7 @@ func NamespacesMustBeReady(t *testing.T, c client.Client, timeoutConfig config.T
 				}
 			}
 		}
-		t.Logf("Gateways and Pods in %s namespaces ready", strings.Join(namespaces, ", "))
+		t.Logf("Pods in %s namespaces ready", strings.Join(namespaces, ", "))
 		return true, nil
 	})
 	require.NoErrorf(t, waitErr, "error waiting for %s namespaces to be ready", strings.Join(namespaces, ", "))
