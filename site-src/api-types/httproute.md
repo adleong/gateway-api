@@ -1,5 +1,9 @@
 # HTTPRoute
 
+??? success "Standard Channel in v0.5.0+"
+
+    The `HTTPRoute` resource is Beta and part of the Standard Channel in `v0.5.0+`.
+
 [HTTPRoute][httproute] is a Gateway API type for specifying routing behavior
 of HTTP requests from a Gateway listener to an API object, i.e. Service.
 
@@ -81,14 +85,16 @@ Take the following matches configuration as an example:
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 ...
-matches:
-  - path:
-      value: "/foo"
-    headers:
-      values:
-        version: "2"
-  - path:
-      value: "/v2/foo"
+spec:
+  rules:
+  - matches:
+    - path:
+        value: "/foo"
+      headers:
+      - name: "version"
+        value: "2"
+    - path:
+        value: "/v2/foo"
 ```
 
 For a request to match against this rule, it must satisfy EITHER of the

@@ -52,7 +52,7 @@ func TestConformance(t *testing.T) {
 
 	supportedFeatures := suite.ParseSupportedFeatures(*flags.SupportedFeatures)
 	exemptFeatures := suite.ParseSupportedFeatures(*flags.ExemptFeatures)
-
+	skipTests := suite.ParseSkipTests(*flags.SkipTests)
 	namespaceLabels := suite.ParseNamespaceLabels(*flags.NamespaceLabels)
 	namesapceAnnotations := suite.ParseNamespaceAnnotations(*flags.NamespaceAnnotations)
 
@@ -74,6 +74,7 @@ func TestConformance(t *testing.T) {
 		EnableAllSupportedFeatures: *flags.EnableAllSupportedFeatures,
 		NamespaceLabels:            namespaceLabels,
 		NamespaceAnnotations:       namespaceAnnotations,
+		SkipTests:                  skipTests,
 	})
 	cSuite.Setup(t)
 

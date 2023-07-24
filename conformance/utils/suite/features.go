@@ -64,6 +64,8 @@ const (
 	//
 	//       See: https://github.com/kubernetes-sigs/gateway-api/issues/1780
 	SupportGatewayClassObservedGenerationBump SupportedFeature = "GatewayClassObservedGenerationBump"
+	// This option indicates that the Gateway can also use port 8080
+	SupportGatewayPort8080 SupportedFeature = "GatewayPort8080"
 )
 
 // StandardExtendedFeatures are extra generic features that implementations may
@@ -73,6 +75,7 @@ const (
 // See: https://github.com/kubernetes-sigs/gateway-api/issues/1891
 var StandardExtendedFeatures = sets.New(
 	SupportGatewayClassObservedGenerationBump,
+	SupportGatewayPort8080,
 ).Insert(StandardCoreFeatures.UnsortedList()...)
 
 // -----------------------------------------------------------------------------
@@ -84,6 +87,24 @@ const (
 	SupportRouteDestinationPortMatching SupportedFeature = "RouteDestinationPortMatching"
 )
 
+const (
+	// This option indicates the GatewayClass supports routability
+	// See: https://gateway-api.sigs.k8s.io/geps/gep-1651/
+	SupportGatewayClassRoutability SupportedFeature = "SupportGatewayClassRoutability"
+
+	// This option indicates support for a Gateway to have Public routability
+	// See: https://gateway-api.sigs.k8s.io/geps/gep-1651/
+	SupportGatewayPublicRoutability SupportedFeature = "SupportGatewayPublicRoutability"
+
+	// This option indicates support for a Gateway to have Private routability
+	// See: https://gateway-api.sigs.k8s.io/geps/gep-1651/
+	SupportGatewayPrivateRoutability SupportedFeature = "SupportGatewayPrivateRoutability"
+
+	// This option indicates support for a Gateway to have Cluster routability
+	// See: https://gateway-api.sigs.k8s.io/geps/gep-1651/
+	SupportGatewayClusterRoutability SupportedFeature = "SupportGatewayClusterRoutability"
+)
+
 // ExperimentalExtendedFeatures are extra generic features that are currently
 // only available in our experimental release channel, and at an extended
 // support level.
@@ -92,6 +113,10 @@ const (
 // See: https://github.com/kubernetes-sigs/gateway-api/issues/1891
 var ExperimentalExtendedFeatures = sets.New(
 	SupportRouteDestinationPortMatching,
+	SupportGatewayClassRoutability,
+	SupportGatewayPublicRoutability,
+	SupportGatewayPrivateRoutability,
+	SupportGatewayClusterRoutability,
 )
 
 // -----------------------------------------------------------------------------

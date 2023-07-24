@@ -35,6 +35,7 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.details
   - pymdownx.highlight
   - pymdownx.inlinehilite
   - pymdownx.superfences:
@@ -86,20 +87,19 @@ nav:
       - Provisional:
         - geps/gep-1324.md
         - geps/gep-1619.md
-        - geps/gep-1651.md
         - geps/gep-1897.md
         - geps/gep-1867.md
-      - Prototyping:
-        - geps/gep-1709.md
       - Implementable:
         - geps/gep-1742.md
         - geps/gep-1686.md
         - geps/gep-1426.md
       - Experimental:
         - geps/gep-1748.md
+        - geps/gep-1651.md
         - geps/gep-1016.md
         - geps/gep-957.md
         - geps/gep-713.md
+        - geps/gep-1709.md
       - Standard:
         - geps/gep-1364.md
         - geps/gep-1323.md

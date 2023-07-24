@@ -36,7 +36,7 @@ import (
 // conformance tests.
 type ConformanceTestSuite struct {
 	Client            client.Client
-	Clientset         *clientset.Clientset
+	Clientset         clientset.Interface
 	RESTClient        *rest.RESTClient
 	RestConfig        *rest.Config
 	RoundTripper      roundtripper.RoundTripper
@@ -56,7 +56,7 @@ type ConformanceTestSuite struct {
 // Options can be used to initialize a ConformanceTestSuite.
 type Options struct {
 	Client               client.Client
-	Clientset            *clientset.Clientset
+	Clientset            clientset.Interface
 	RESTClient           *rest.RESTClient
 	RestConfig           *rest.Config
 	GatewayClassName     string
@@ -263,4 +263,13 @@ func ParseNamespaceLabels(f string) map[string]string {
 		}
 	}
 	return res
+}
+
+// ParseSkipTests parses flag arguments and converts the string to
+// []string containing the tests to be skipped.
+func ParseSkipTests(t string) []string {
+	if t == "" {
+		return nil
+	}
+	return strings.Split(t, ",")
 }

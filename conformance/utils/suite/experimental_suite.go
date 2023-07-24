@@ -20,11 +20,14 @@ limitations under the License.
 package suite
 
 import (
+	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -114,12 +117,18 @@ func NewExperimentalConformanceTestSuite(s ExperimentalConformanceOptions) (*Exp
 		if s.SupportedFeatures == nil {
 			s.SupportedFeatures = sets.New[SupportedFeature]()
 		}
-		// the use of a conformance profile implicitly enables any features of
-		// that profile which are supported at a Core level of support.
+
 		for _, conformanceProfileName := range s.ConformanceProfiles.UnsortedList() {
 			conformanceProfile, err := getConformanceProfileForName(conformanceProfileName)
 			if err != nil {
 				return nil, fmt.Errorf("failed to retrieve conformance profile: %w", err)
+			}
+			// the use of a conformance profile implicitly enables any features of
+			// that profile which are supported at a Core level of support.
+			for _, f := range conformanceProfile.CoreFeatures.UnsortedList() {
+				if !s.SupportedFeatures.Has(f) {
+					s.SupportedFeatures.Insert(f)
+				}
 			}
 			for _, f := range conformanceProfile.ExtendedFeatures.UnsortedList() {
 				if s.SupportedFeatures.Has(f) {
@@ -143,6 +152,9 @@ func NewExperimentalConformanceTestSuite(s ExperimentalConformanceOptions) (*Exp
 
 	suite.ConformanceTestSuite = ConformanceTestSuite{
 		Client:           s.Client,
+		Clientset:        s.Clientset,
+		RESTClient:       s.RESTClient,
+		RestConfig:       s.RestConfig,
 		RoundTripper:     roundTripper,
 		GatewayClassName: s.GatewayClassName,
 		Debug:            s.Debug,
@@ -277,9 +289,58 @@ func (suite *ExperimentalConformanceTestSuite) Report() (*confv1a1.ConformanceRe
 	profileReports.compileResults(suite.extendedSupportedFeatures, suite.extendedUnsupportedFeatures)
 
 	return &confv1a1.ConformanceReport{
+		TypeMeta: v1.TypeMeta{
+			APIVersion: "gateway.networking.k8s.io/v1alpha1",
+			Kind:       "ConformanceReport",
+		},
 		Date:              time.Now().Format(time.RFC3339),
 		Implementation:    suite.implementation,
 		GatewayAPIVersion: "TODO",
 		ProfileReports:    profileReports.list(),
 	}, nil
+}
+
+// ParseImplementation parses implementation-specific flag arguments and
+// creates a *confv1a1.Implementation.
+func ParseImplementation(org, project, url, version, contact string) (*confv1a1.Implementation, error) {
+	if org == "" {
+		return nil, errors.New("implementation's organization can not be empty")
+	}
+	if project == "" {
+		return nil, errors.New("implementation's project can not be empty")
+	}
+	if url == "" {
+		return nil, errors.New("implementation's url can not be empty")
+	}
+	if version == "" {
+		return nil, errors.New("implementation's version can not be empty")
+	}
+	contacts := strings.SplitN(contact, ",", -1)
+	if len(contacts) == 0 {
+		return nil, errors.New("implementation's contact can not be empty")
+	}
+
+	// TODO: add data validation https://github.com/kubernetes-sigs/gateway-api/issues/2178
+
+	return &confv1a1.Implementation{
+		Organization: org,
+		Project:      project,
+		URL:          url,
+		Version:      version,
+		Contact:      contacts,
+	}, nil
+}
+
+// ParseConformanceProfiles parses flag arguments and converts the string to
+// sets.Set[ConformanceProfileName].
+func ParseConformanceProfiles(p string) sets.Set[ConformanceProfileName] {
+	res := sets.Set[ConformanceProfileName]{}
+	if p == "" {
+		return res
+	}
+
+	for _, value := range strings.Split(p, ",") {
+		res.Insert(ConformanceProfileName(value))
+	}
+	return res
 }

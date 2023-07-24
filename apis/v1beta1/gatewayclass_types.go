@@ -57,6 +57,9 @@ type GatewayClass struct {
 
 	// Status defines the current state of GatewayClass.
 	//
+	// Implementations MUST populate status on all GatewayClass resources which
+	// specify their controller name.
+	//
 	// +kubebuilder:default={conditions: {{type: "Accepted", status: "Unknown", message: "Waiting for controller", reason: "Waiting", lastTransitionTime: "1970-01-01T00:00:00Z"}}}
 	Status GatewayClassStatus `json:"status,omitempty"`
 }
@@ -183,6 +186,21 @@ const (
 
 // GatewayClassStatus is the current status for the GatewayClass.
 type GatewayClassStatus struct {
+	// Routabilities specifies a list of supported routabilities offered by
+	// the GatewayClass. The first entry in this list will be the default
+	// routability used when Gateways of this class are created.
+	//
+	// Implementations MAY provide a pre-defined set of GatewayClasses that
+	// limit the routability choices of a Gateway.
+	//
+	// Implementations MUST populate this list with the GatewayRoutability values
+	// that are supported by this GatewayClass.
+	//
+	// +optional
+	// +kubebuilder:validation:MaxItems=8
+	// <gateway:experimental>
+	Routabilities []GatewayRoutability `json:"routabilities,omitempty"`
+
 	// Conditions is the current status from the controller for
 	// this GatewayClass.
 	//

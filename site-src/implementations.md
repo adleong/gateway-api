@@ -26,12 +26,15 @@ Implementors and integrators of Gateway API are encouraged to update this docume
 - [NGINX Kubernetes Gateway][12]
 - [STUNner][21] (beta)
 - [Traefik][13] (alpha)
+- [WSO2 APK][25] (pre-alpha)
 
 ## Integration Status
+
 - [Flagger][14] (public preview)
 - [cert-manager][15] (alpha)
 - [argo-rollouts][22] (alpha)
 - [Knative][24] (alpha)
+- [Kuadrant][26] (work in progress)
 
 [1]:#acnodal-epic
 [2]:#apisix
@@ -57,6 +60,8 @@ Implementors and integrators of Gateway API are encouraged to update this docume
 [22]:#argo-rollouts
 [23]:#amazon-elastic-kubernetes-service
 [24]:#knative
+[25]:#wso2-apk
+[26]:#kuadrant
 
 ## Implementations
 
@@ -305,6 +310,18 @@ Traefik is currently working on implementing UDP, and ReferenceGrant. Status upd
 [traefik]:https://traefik.io
 [traefik-1]:https://doc.traefik.io/traefik/routing/providers/kubernetes-gateway/
 
+### WSO2 APK
+
+[WSO2 APK][wso2-apk] is a purpose-built API management solution tailored for Kubernetes environments, delivering seamless integration, flexibility, and scalability to organizations in managing their APIs.
+
+WSO2 APK implements the Gateway API, encompassing Gateway and HTTPRoute functionalities. Additionally, it provides support for rate limiting, authentication/authorization, and analytics/observability through the use of Custom Resources (CRs).
+
+For up-to-date information on the supported version and features of the Gateway API, please refer to the [APK Gateway documentation][apk-doc]. If you have any questions or would like to contribute, feel free to create [issues or pull requests][repo]. Join our [Discord channel][discord] to connect with us and engage in discussions.
+
+[wso2-apk]:https://apk.docs.wso2.com/en/latest/
+[apk-doc]:https://apk.docs.wso2.com/en/latest/catalogs/kubernetes-crds/
+[repo]:https://github.com/wso2/apk
+[discord]:https://discord.com/channels/955510916064092180/1113056079501332541
 
 ## Integrations
 
@@ -341,3 +358,16 @@ cert-manager can generate TLS certificates for Gateway resources. This is config
 
 [knative]:https://knative.dev/
 [knative-net-gateway-api]:https://github.com/knative-sandbox/net-gateway-api
+
+### Kuadrant
+
+[Kuadrant][kuadrant] is an open source multi cluster Gateway API controller that integrates with and provides policies to other Gateway API providers.
+
+Kuadrant supports Gateway API for defining gateways centrally and attaching policies such as DNS, TLS, Auth and Rate Limiting that apply to all gateway instances in a multi cluster environment.
+Kuadrant works with Istio as the underlying gateway provider, with plans to work with other gateway providers such as Envoy Gateway.
+
+For help and support with Kuadrant's implementation please feel free to [create an issue][kuadrant-issue-new] or ask for help in the [#kuadrant channel on Kubernetes slack][kuadrant-slack].
+
+[kuadrant]:https://kuadrant.io/
+[kuadrant-issue-new]:https://github.com/Kuadrant/multicluster-gateway-controller/issues/new
+[kuadrant-slack]:https://kubernetes.slack.com/archives/C05J0D0V525
